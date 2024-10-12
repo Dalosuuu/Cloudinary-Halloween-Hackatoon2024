@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformation Result</title>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Image Transformation Result</h1>
+    <h2>Original Image</h2>
+    <img src="{{ original_url }}" alt="Original Image" width="300">
+
+    {% if error_message %}
+        <h2>Error</h2>
+        <p>{{ error_message }}</p>
+    {% else %}
+        <h2>Final Transformed Image</h2>
+        <img src="{{ final_image_url }}" alt="Final Transformed Image" width="300">
+    {% endif %}
+</body>
+</html>

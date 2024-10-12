@@ -1,0 +1,9 @@
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.env
+*.log
+*.txt
+*.csv
+*.json
