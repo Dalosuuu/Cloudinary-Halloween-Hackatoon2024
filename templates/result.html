@@ -1,23 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transformation Result</title>
     <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .skeleton {
+            width: 320px;
+            height: 320px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .skeleton::before {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: -150px;
+            width: 150px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                left: -150px;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .skeleton svg {
+            width: 60px;
+            height: 60px;
+        }
+
+        .skeleton svg path,
+        .skeleton svg circle {
+            fill: #e0e0e0;
+            /* Color de relleno del skeleton */
+            stroke: #e0e0e0;
+            /* Color del borde del skeleton */
+        }
+
+        .skeleton svg mask path {
+            fill: #e0e0e0;
+            /* Color del fondo del mask */
+        }
+
+        .skeleton svg g path {
+            fill: #e0e0e0;
+            stroke: #e0e0e0;
+        }
+    </style>
 </head>
+
 <body>
     <h1>Image Transformation Result</h1>
     <h2>Original Image</h2>
     <img src="{{ original_url }}" alt="Original Image" width="300">
 
     {% if error_message %}
-        <h2>Error</h2>
-        <p>{{ error_message }}</p>
+    <h2>Error</h2>
+    <p>{{ error_message }}</p>
     {% else %}
-        <h2>Final Transformed Image</h2>
-        <img src="{{ final_image_url }}" alt="Final Transformed Image" width="300">
+    <h2>Final Transformed Image</h2>
+    <div id="skeleton-loader" style="display: flex; justify-content: center; align-items: center;">
+        <div class="skeleton">
+            <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="24" height="24" rx="4" ry="4" stroke="#aaaaaa" stroke-width="2" fill="#aaaaaa">
+                </rect>
+                <circle cx="18" cy="7" r="1" stroke="#aaaaaa" stroke-width="2" stroke-linecap="round" fill="#e0e0e0" />
+                <path
+                    d="M5.18601 18H14.814C15.7609 18 16.3348 16.9546 15.8264 16.1557L11.0124 8.5909C10.5408 7.84991 9.45915 7.84991 8.98761 8.59091L4.17361 16.1557C3.66524 16.9546 4.2391 18 5.18601 18Z"
+                    fill="#b3b3b3" />
+                <path
+                    d="M12.2422 18H19.7578C20.7162 18 21.2879 16.9318 20.7562 16.1344L16.9985 10.4977C16.5235 9.78521 15.4765 9.78521 15.0015 10.4977L11.2438 16.1344C10.7121 16.9318 11.2838 18 12.2422 18Z"
+                    fill="#b3b3b3" />
+            </svg>
+        </div>
+    </div>
+    <img id="cloudinary-id" src="{{ final_image_url }}" alt="Final Transformed Image" width="300">
+    <script>
+        resImg = document.querySelector("#cloudinary-id")
+        resImg.addEventListener("load", (event) => {
+            document.querySelector("#skeleton-loader").innerHTML = "";
+        });
+    </script>
     {% endif %}
 </body>
+
 </html>
