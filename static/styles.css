@@ -33,15 +33,26 @@ input, select, button {
 }
 
 button {
-    background-color: #f0e68c;
+    background: linear-gradient(135deg, #ff4500, #f0e68c);
     color: #1a1a1a;
+    border: none;
+    border-radius: 25px;
+    padding: 12px 24px;
+    font-size: 1.2em;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
+    transition: background 0.3s, transform 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 button:hover {
-    background-color: #ff4500;
-    transform: scale(1.1);
+    background: linear-gradient(135deg, #f0e68c, #ff4500);
+    transform: scale(1.05);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+    transform: scale(0.98);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
 }
 
 img {
@@ -50,7 +61,7 @@ img {
     margin: 20px;
     width: 300px;
     transition: transform 0.3s;
-    animation: shake 0.5s infinite;
+    animation: shake 0.02s infinite;
 }
 
 img:hover {
@@ -72,4 +83,49 @@ img:hover {
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+.file-input-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+#customButton {
+    background: linear-gradient(135deg, #ff4500, #f0e68c);
+    color: #1a1a1a;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#customButton:hover {
+    background: linear-gradient(135deg, #f0e68c, #ff4500);
+    transform: scale(1.05);
+}
+
+#fileName {
+    margin-left: 10px;
+    font-size: 1em;
+    color: #f0e68c;
+}
+
+#tryAnotherButton {
+    display: none;
+    margin: 20px auto;
+}
+
+#loading {
+    display: block;
+    margin: 20px auto;
+}
+
+#loadingMessage {
+    font-size: 1.2em;
+    color: #f0e68c;
 }

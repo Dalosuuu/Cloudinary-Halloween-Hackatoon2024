@@ -1,9 +1,13 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import cloudinary
 import cloudinary.uploader  # Ensure this import is correct
 from cloudinary import CloudinaryImage
 from dotenv import load_dotenv
 import os
+import time
+import hashlib
+import hmac
+from cloudinary import utils as cloudinary_utils
 
 # Load environment variables
 load_dotenv()
@@ -18,28 +22,15 @@ cloudinary.config(
 
 app = Flask(__name__)
 
-
 @app.route("/", methods=["GET", "POST"])
-def upload_image():
+def home():
     if request.method == "POST":
-        file = request.files["file"]
-        facial_features = request.form["facial_features"]
-        theme = request.form["theme"]
-        costume = request.form["costume"]
+        public_id = request.form.get("public_id")
+        facial_features = request.form.get("facial_features")
+        theme = request.form.get("theme")
+        costume = request.form.get("costume")
 
-        if file:
-            # Upload the image
-            upload_result = cloudinary.uploader.upload(file)
-            public_id = upload_result.get("public_id")
-            original_url = upload_result.get("secure_url")
-
-            if not public_id:
-                return render_template(
-                    "result.html",
-                    original_url=original_url,
-                    error_message="Failed to upload image.",
-                )
-
+        if public_id:
             try:
                 # Apply transformations using CloudinaryImage
                 image = CloudinaryImage(public_id)
@@ -75,17 +66,42 @@ def upload_image():
                 print("Error during transformation:", e)
                 return render_template(
                     "result.html",
-                    original_url=original_url,
+                    original_url=f"https://res.cloudinary.com/{os.getenv('CLOUD_NAME')}/image/upload/{public_id}",
                     error_message="An error occurred during image transformation.",
                 )
 
             # Render the result template
             return render_template(
                 "result.html",
-                original_url=original_url,
+                original_url=f"https://res.cloudinary.com/{os.getenv('CLOUD_NAME')}/image/upload/{public_id}",
                 final_image_url=final_image_url,
             )
-    return render_template("upload.html")
+    return render_template("index.html")
+
+@app.route("/upload", methods=["GET"])
+def upload_image():
+    return render_template(
+        "upload.html",
+        cloud_name=os.getenv("CLOUD_NAME"),
+        upload_preset=os.getenv("UPLOAD_PRESET"),
+        api_key=os.getenv("API_KEY")
+    )
+
+@app.route("/signature", methods=["GET"])
+def get_signature():
+    params = {k: v for k, v in request.args.items()}
+    params['timestamp'] = int(time.time())
+    params['upload_preset'] = os.getenv("UPLOAD_PRESET")
+    
+    signature = cloudinary_utils.api_sign_request(params, os.getenv("API_SECRET"))
+    
+    return jsonify(
+        signature=signature,
+        timestamp=params['timestamp'],
+        api_key=os.getenv("API_KEY"),
+        cloud_name=os.getenv("CLOUD_NAME"),
+        upload_preset=os.getenv("UPLOAD_PRESET")
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)

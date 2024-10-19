@@ -1,44 +1,81 @@
 // script.js
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('uploadForm');
-    const button = form.querySelector('button');
-    const loading = document.getElementById('loading');
-    const loadingMessage = document.getElementById('loadingMessage');
+    const button = form.querySelector('button[type="submit"]');
+    const cloudinaryButton = document.getElementById('cloudinaryUploadButton');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const publicIdInput = document.getElementById('publicIdInput');
 
-    const messages = {
-        upload: [
-            "Sending image to server...",
-            "Uploading your spooky selfie...",
-            "Preparing your image for transformation..."
-        ],
-        theme: [
-            "Creating the theme...",
-            "Adding some Halloween magic...",
-            "Spookifying the background..."
-        ],
-        costume: [
-            "Making sure you are not naked...",
-            "Dressing you up in style...",
-            "Finding the perfect costume..."
-        ]
-    };
+    // These values are now provided directly in the HTML template
+    const cloudName = document.getElementById('cloudName').value;
+    const uploadPreset = document.getElementById('uploadPreset').value;
+    const apiKey = document.getElementById('apiKey').value;
 
-    function getRandomMessage(type) {
-        const msgs = messages[type];
-        return msgs[Math.floor(Math.random() * msgs.length)];
-    }
+    cloudinaryButton.addEventListener('click', function() {
+        cloudinary.openUploadWidget({
+            cloudName: cloudName,
+            uploadPreset: uploadPreset,
+            apiKey: apiKey,
+            uploadSignature: (callback, params_to_sign) => {
+                fetch('/signature?' + new URLSearchParams(params_to_sign))
+                    .then(response => response.json())
+                    .then(data => {
+                        callback(data.signature);
+                    })
+                    .catch(error => {
+                        console.error('Signature fetch error:', error);
+                    });
+            },
+            sources: ['local', 'camera', 'google_drive', 'dropbox', 'image_search'],
+            multiple: false,
+            cropping: true,
+            croppingAspectRatio: 1,
+            croppingShowDimensions: true,
+            croppingValidateDimensions: true,
+            showAdvancedOptions: true
+        }, (error, result) => {
+            if (error) {
+                console.error('Upload error:', error);
+                alert('An error occurred during upload. Please try again.');
+            } else if (result && result.event === "success") {
+                const fileUrl = result.info.secure_url;
+                const publicId = result.info.public_id;
+                
+                if (fileNameDisplay) {
+                    fileNameDisplay.textContent = `Selected: ${result.info.original_filename}`;
+                    fileNameDisplay.style.color = '#f0e68c'; // Ensure text is visible
+                } else {
+                    console.warn('fileNameDisplay element not found');
+                }
+                
+                if (publicIdInput) {
+                    publicIdInput.value = publicId;
+                } else {
+                    console.warn('publicIdInput element not found');
+                }
+                
+                console.log('File URL:', fileUrl);
+                console.log('Public ID:', publicId);
+                
+                // Enable the submit button after successful upload
+                const submitButton = document.querySelector('button[type="submit"]');
+                if (submitButton) {
+                    submitButton.disabled = false;
+                }
+            }
+        });
+    });
 
     form.addEventListener('submit', function(event) {
-        const fileInput = form.querySelector('input[type="file"]');
-        const selects = form.querySelectorAll('select');
-
+        event.preventDefault();
         let valid = true;
 
-        if (!fileInput.files.length) {
-            alert('Please select an image.');
+        if (!publicIdInput.value) {
+            alert('Please upload an image.');
             valid = false;
         }
 
+        const selects = form.querySelectorAll('select');
         selects.forEach(select => {
             if (!select.value) {
                 alert('Please select an option for ' + select.name.replace('_', ' ') + '.');
@@ -46,20 +83,43 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        if (!valid) {
-            event.preventDefault();
-        } else {
+        if (valid) {
             button.disabled = true;
             loading.style.display = 'block';
-            loadingMessage.textContent = getRandomMessage('upload');
 
-            setTimeout(() => {
-                loadingMessage.textContent = getRandomMessage('theme');
-            }, 2000);
+            const formData = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.headers.get('content-type').includes('application/json')) {
+                    return response.json();
+                } else {
+                    return response.text().then(html => {
+                        document.open();
+                        document.write(html);
+                        document.close();
+                        throw new Error('Redirected to result page');
+                    });
+                }
+            })
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                window.location.href = data.redirect;
+            })
+            .catch(error => {
+                if (error.message !== 'Redirected to result page') {
+                    console.error('Error:', error);
+                    alert('An error occurred during transformation: ' + error.message);
+                    button.disabled = false;
+                    loading.style.display = 'none';
+                }
+            });
 
-            setTimeout(() => {
-                loadingMessage.textContent = getRandomMessage('costume');
-            }, 4000);
         }
     });
+
 });

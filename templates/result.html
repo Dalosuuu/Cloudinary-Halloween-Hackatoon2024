@@ -64,6 +64,30 @@
             fill: #e0e0e0;
             stroke: #e0e0e0;
         }
+
+        .st-btn {
+            display: inline-block;
+            cursor: pointer;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .st-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .st-btn img {
+            width: 32px;
+            height: 32px;
+            vertical-align: middle;
+        }
+
+        .st-label {
+            margin-left: 5px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 
@@ -97,9 +121,80 @@
         resImg = document.querySelector("#cloudinary-id")
         resImg.addEventListener("load", (event) => {
             document.querySelector("#skeleton-loader").innerHTML = "";
+            document.getElementById("shareButtons").style.display = "block";
         });
     </script>
     {% endif %}
+
+    <div id="shareButtons" style="display: none; margin-top: 20px;">
+        <h3>Share your spooky transformation:</h3>
+        <div class="st-btn st-first" data-network="facebook" style="display: inline-block;" onclick="shareFacebook()">
+            <img alt="facebook sharing button" src="https://platform-cdn.sharethis.com/img/facebook.svg">
+            <span class="st-label">Share</span>
+        </div>
+        <div class="st-btn" data-network="twitter" style="display: inline-block;" onclick="shareTwitter()">
+            <img alt="twitter sharing button" src="https://platform-cdn.sharethis.com/img/twitter.svg">
+            <span class="st-label">Tweet</span>
+        </div>
+        <div class="st-btn" data-network="email" style="display: inline-block;" onclick="shareEmail()">
+            <img alt="email sharing button" src="https://platform-cdn.sharethis.com/img/email.svg">
+            <span class="st-label">Email</span>
+        </div>
+        <div class="st-btn" data-network="whatsapp" style="display: inline-block;" onclick="shareWhatsApp()">
+            <img alt="whatsapp sharing button" src="https://platform-cdn.sharethis.com/img/whatsapp.svg">
+            <span class="st-label">Share</span>
+        </div>
+        <div class="st-btn st-last" data-network="sharethis" style="display: inline-block;" onclick="copyLink()">
+            <img alt="sharethis sharing button" src="https://platform-cdn.sharethis.com/img/sharethis.svg">
+            <span class="st-label">Share</span>
+        </div>
+    </div>
+
+    <script>
+        function shareTwitter() {
+            var text = "Check out my spooky Halloween transformation!";
+            var url = "{{ final_image_url }}";
+            var hashtags = "HalloweenTransformation,SpookyAI";
+            var via = "YourAppName";
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${url}&hashtags=${hashtags}&via=${via}`, "_blank", "width=550,height=420");
+        }
+
+        function shareFacebook() {
+            var url = "{{ final_image_url }}";
+            window.open("https://www.facebook.com/sharer/sharer.php?u=" + url, "_blank");
+        }
+
+        function copyLink() {
+            var dummy = document.createElement("input");
+            document.body.appendChild(dummy);
+            dummy.value = "{{ final_image_url }}";
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            alert("Link copied to clipboard!");
+        }
+
+        function shareEmail() {
+            var subject = "Check out my spooky Halloween transformation!";
+            var body = "I just created this spooky Halloween transformation! Check it out: {{ final_image_url }}";
+            window.location.href = "mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+        }
+
+        function shareWhatsApp() {
+            var text = "Check out my spooky Halloween transformation! {{ final_image_url }}";
+            window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
+        }
+    </script>
+
+    <div id="loading" style="display: none;">
+        <p id="loadingMessage"></p>
+    </div>
+
+    <button id="tryAnotherButton">
+        <span id="buttonText">Try Another Image</span>
+    </button>
+
+    <script src="{{ url_for('static', filename='result.js') }}"></script>
 </body>
 
 </html>
