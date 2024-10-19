@@ -40,6 +40,7 @@ This is a Flask web application that allows users to upload an image and apply H
    CLOUD_NAME=your_cloud_name
    API_KEY=your_api_key
    API_SECRET=your_api_secret
+   UPLOAD_PRESET=your_upload_preset_name
    ```
 
 ## Usage
@@ -60,7 +61,7 @@ This is a Flask web application that allows users to upload an image and apply H
 
 6. View your transformed image and use the sharing buttons to share it on social media.
 
-## File Structure
+## Project Structure
 
 - `app.py`: Main application file.
 - `templates/`: Contains HTML templates for the application.
