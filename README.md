@@ -43,6 +43,16 @@ This is a Flask web application that allows users to upload an image and apply H
    UPLOAD_PRESET=your_upload_preset_name
    ```
 
+>[!IMPORTANT]
+>4. Configure the Upload Preset in Cloudinary with the following settings:
+
+   ```
+   Upload preset name: (Equals to **UPLOAD_PRESET** in .env file)
+   Signing Mode: Signed
+   Incoming Transformation: c_crop,g_custom
+   ```
+   ![Upload Preset Settings](/RdmeImages/upload_preset_settings.png)
+
 ## Usage
 
 1. Run the Flask application:
