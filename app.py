@@ -8,23 +8,26 @@ import time
 import hashlib
 import hmac
 from cloudinary import utils as cloudinary_utils
+from waitress import serve
 
 # Load environment variables
 load_dotenv()
 
 class _env:
     """Enviroment variables here..."""
-    def __init__(self, cloud_name, api_key, api_secret, upload_preset):
+    def __init__(self, cloud_name, api_key, api_secret, upload_preset, port):
         
         self.cloud_name = cloud_name
         self.api_key = api_key
         self.api_secret = api_secret
         self.upload_preset = upload_preset
+        self.port = port
     
     cloud_name = os.getenv("CLOUD_NAME")
     api_key = os.getenv("API_KEY")
     api_secret = os.getenv("API_SECRET")
     upload_preset = os.getenv("UPLOAD_PRESET")
+    port = os.getenv("PORT")
 
 # Configure Cloudinary
 cloudinary.config(
@@ -40,7 +43,6 @@ app = Flask(__name__)
 def home():
     if request.method == "POST":
         public_id = request.form.get("public_id")
-        facial_features = request.form.get("facial_features")
         theme = request.form.get("theme")
         costume = request.form.get("costume")
 
@@ -58,36 +60,28 @@ def home():
                         {
                             "effect": f"gen_background_replace:prompt_Add {theme} to the background"
                         },
-                        # {"effect": f"gen_replace:from_Subject's mouth;to_a {facial_features}'s halloween mouth;preserve-geometry_true"},
-                        # {"effect": f"gen_replace:from_Subject's eyes;to_a {facial_features}'s halloween eyes;preserve-geometry_true"},
-                        # {"effect": f"gen_replace:from_Subject's top of head only;to_a {facial_features}'s halloween hat or {facial_features}'s hair;preserve-geometry_true"},
-                        # {"effect": f"gen_replace:from_Subject's ears;to_a {facial_features}'s halloween ears;preserve-geometry_true"}
+                        {
+                            "effect": "enhance"
+                        },
                         # {"effect": f"gen_replace:from_Subject's hands;to_a {costume}'s hands holding wine in a glass and yogurt in the other hand;preserve-geometry_true"}
                     ]
                 )
-
                 # Notes
-                # It would be funny to sa that holding the subject's real clothes in the from subject's clothes
-
                 # Debugging: Print the final image URL
                 print("Final Image URL:", final_image_url)
-
-                # Simple check to ensure URL is valid
-                if not final_image_url:
-                    raise Exception("Generated URL is invalid.")
 
             except Exception as e:
                 print("Error during transformation:", e)
                 return render_template(
                     "result.html",
-                    original_url=f"https://res.cloudinary.com/{os.getenv('CLOUD_NAME')}/image/upload/{public_id}",
+                    original_url=f"https://res.cloudinary.com/{_env.cloud_name}/image/upload/{public_id}",
                     error_message="An error occurred during image transformation.",
                 )
 
             # Render the result template
             return render_template(
                 "result.html",
-                original_url=f"https://res.cloudinary.com/{os.getenv('CLOUD_NAME')}/image/upload/{public_id}",
+                original_url=f"https://res.cloudinary.com/{_env.cloud_name}/image/upload/{public_id}",
                 final_image_url=final_image_url,
             )
     return render_template("index.html")
@@ -118,4 +112,7 @@ def get_signature():
     )
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    if not _env.port:
+        app.run(debug=True)
+    else:
+        serve(app, host='0.0.0.0', port=_env.port)
