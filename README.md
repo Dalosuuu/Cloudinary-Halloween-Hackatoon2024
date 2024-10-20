@@ -41,6 +41,7 @@ This is a Flask web application that allows users to upload an image and apply H
    API_KEY=your_api_key
    API_SECRET=your_api_secret
    UPLOAD_PRESET=your_upload_preset_name
+   PORT= #optional
    ```
 
 >[!IMPORTANT]
