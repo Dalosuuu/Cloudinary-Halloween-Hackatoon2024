@@ -116,13 +116,13 @@
             </svg>
         </div>
     </div>
-    <img id="cloudinary-id" src="{{ final_image_url }}" alt="Final Transformed Image" width="300">
+    <img id="cloudinary-id" alt="Final Transformed Image" width="300">
     <script>
-        resImg = document.querySelector("#cloudinary-id")
-        resImg.addEventListener("load", (event) => {
-            document.querySelector("#skeleton-loader").innerHTML = "";
-            document.getElementById("shareButtons").style.display = "block";
-        });
+        resImg = "{{ final_image_url }}"
+
+        resImg = resImg.replace("b&#39;", "")
+        resImg = resImg.replace("&#39;", "")
+        document.getElementById("cloudinary-id").src = "data:image/png;base64," + resImg;
     </script>
     {% endif %}
 

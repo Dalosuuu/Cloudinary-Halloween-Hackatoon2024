@@ -17,12 +17,6 @@
         <input type="hidden" id="publicIdInput" name="public_id">
         <input type="hidden" id="cloudName" value="{{ cloud_name }}">
         <input type="hidden" id="uploadPreset" value="{{ upload_preset }}">
-        <input type="hidden" id="apiKey" value="{{ api_key }}">
-        <select name="facial_features" required>
-            <option value="" disabled selected>Select Facial Features</option>
-            <option value="vampire">Vampire</option>
-            <option value="wolfman">Wolfman</option>
-            <option value="frankenstein">Frankenstein (Green)</option>
         </select><br>
         <select name="theme" required>
             <option value="" disabled selected>Select Theme</option>
@@ -50,7 +44,6 @@
     <script>
         const cloudName = '{{ cloud_name }}';
         const uploadPreset = '{{ upload_preset }}';
-        const apiKey = '{{ api_key }}';
     </script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
