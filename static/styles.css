@@ -556,8 +556,7 @@ video {
 
 /* styles.css */
 
-/* 
-body {
+/* body {
   background-color: #1a1a1a;
   color: #f0e68c;
   font-family: 'Creepster', cursive;
@@ -707,4 +706,85 @@ img:hover {
 #loadingMessage {
   font-size: 1.2em;
   color: #f0e68c;
+}
+
+.skeleton {
+  width: 320px;
+  height: 320px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.skeleton::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: -150px;
+  width: 150px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    left: -150px;
+  }
+
+  100% {
+    left: 100%;
+  }
+}
+
+.skeleton svg {
+  width: 60px;
+  height: 60px;
+}
+
+.skeleton svg path,
+.skeleton svg circle {
+  fill: #e0e0e0;
+  Color de relleno del skeleton
+  stroke: #e0e0e0;
+  Color del borde del skeleton
+}
+
+.skeleton svg mask path {
+  fill: #e0e0e0;
+  Color del fondo del mask
+}
+
+.skeleton svg g path {
+  fill: #e0e0e0;
+  stroke: #e0e0e0;
+}
+
+.st-btn {
+  display: inline-block;
+  cursor: pointer;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.st-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.st-btn img {
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
+}
+
+.st-label {
+  margin-left: 5px;
+  vertical-align: middle;
 } */
