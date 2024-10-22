@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const cloudName = document.getElementById('cloudName').value;
     const uploadPreset = document.getElementById('uploadPreset').value;
     const apiKey = document.getElementById('apiKey').value;
-    
+  
     cloudinaryButton.addEventListener('click', function() {
         cloudinary.openUploadWidget({
             cloudName: cloudName,
@@ -59,10 +59,10 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();
         let valid = true;
 
-        if (!publicIdInput.value) {
-            alert('Please upload an image.');
-            valid = false;
-        }
+        // if (!publicIdInput.value) {
+        //     alert('Please upload an image.');
+        //     valid = false;
+        // }
 
         const selects = form.querySelectorAll('select');
         selects.forEach(select => {
