@@ -45,6 +45,37 @@ app = Flask(__name__)
 
 app.config['CUSTOM_STATIC_PATH'] = "node_modules/flowbite/dist/"
 
+costumes = {
+    "Custom": "Random halloween disguse",
+    "Pirate": "Pirate outfit",
+    "Vampire": "Vampire clothes",
+    "Zombie": "Tattered Zombie Streetwear",
+    "Witch": "Magic robes"
+}
+
+body_costumes = ["clothes", "shoulders", "shirt", "body"]
+
+def url_assambler(body_costume, costume, theme, public_id):
+    image = CloudinaryImage(public_id)
+    final_image_url = image.build_url(
+        transformation=[
+            {"width": 300, "crop": "scale"},
+            {"effect": f"upscale"},
+            {
+                "effect": f"gen_replace:from_{body_costume};to_{costume};preserve-geometry_true"
+            },
+            {
+                "effect": f"gen_background_replace:prompt_Add {theme} to the background"
+            },
+            {
+                "effect": "enhance"
+            },
+            # {"effect": f"gen_replace:from_Subject's hands;to_a {costume}'s hands holding wine in a glass and yogurt in the other hand;preserve-geometry_true"}
+        ]
+    )
+
+    return final_image_url
+
 @app.route("/", methods=["GET", "POST"])
 def home():
     if request.method == "POST":
@@ -53,31 +84,11 @@ def home():
         costume = request.form.get("costume")
 
         if public_id:
-                # Apply transformations using CloudinaryImage
-                image = CloudinaryImage(public_id)
-                final_image_url = image.build_url(
-                    transformation=[
-                        {"width": 300, "crop": "scale", "fetch_format": "auto"},
-                        {"effect": f"upscale"},
-                        {
-                            "effect": f"gen_replace:from_clothes;to_{costume}'s clothes;preserve-geometry_true"
-                        },
-                        {
-                            "effect": f"gen_background_replace:prompt_Add {theme} to the background"
-                        },
-                        {
-                            "effect": "enhance"
-                        },
-                        # {"effect": f"gen_replace:from_Subject's hands;to_a {costume}'s hands holding wine in a glass and yogurt in the other hand;preserve-geometry_true"}
-                    ]
-                )
-                # Notes
-                # Debugging: Print the final image URL
-                print("Final Image URL:", final_image_url)
-                
-                img_response = requests.get(final_image_url, headers=headers, verify=cert_crt_path)
-                if img_response.status_code == 423:
-                    img_response = requests.get(final_image_url, headers=headers, verify=cert_crt_path)
+            try:
+                url_lists = []
+                for body_costume in body_costumes:
+                    url_lists.append(url_assambler(body_costume, costume, theme, public_id))
+
 
                 if img_response.status_code == 200:
                     img_base64 = base64.b64encode(img_response.content).decode('utf-8')                    
@@ -88,12 +99,13 @@ def home():
                         original_url=f"https://res.cloudinary.com/{_env.cloud_name}/image/upload/{public_id}",
                         error_message="An error occurred during image transformation.",
                     )  
-                # Render the result template
-                return render_template(
-                    "result.html",
-                    original_url=f"https://res.cloudinary.com/{_env.cloud_name}/image/upload/{public_id}",
-                    final_image_url=img_base64,
-                )
+            # Render the result template
+            return render_template(
+                "result.html",
+                original_url=f"https://res.cloudinary.com/{_env.cloud_name}/image/upload/{public_id}",
+                final_image_url=url_lists,
+            )
+
     return render_template("index.html")
 
 @app.route("/upload", methods=["GET"])
