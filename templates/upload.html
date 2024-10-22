@@ -12,12 +12,8 @@
     <form id="uploadForm" action="/" method="post">
         <div class="file-input-wrapper">
             <button type="button" id="cloudinaryUploadButton">Upload Image</button>
-            <div id="fileNameDisplay">Click to upload an image</div>
+            <div id="fileNameDisplay">Click to upload an image *** debug mode, no needed ***</div>
         </div>
-        <input type="hidden" id="publicIdInput" name="public_id">
-        <input type="hidden" id="cloudName" value="{{ cloud_name }}">
-        <input type="hidden" id="uploadPreset" value="{{ upload_preset }}">
-        </select><br>
         <select name="theme" required>
             <option value="" disabled selected>Select Theme</option>
             <option value="halloween">Halloween</option>
@@ -44,6 +40,7 @@
     <script>
         const cloudName = '{{ cloud_name }}';
         const uploadPreset = '{{ upload_preset }}';
+        const apiKey = '{{ api_key }}';
     </script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
