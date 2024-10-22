@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // These values are now provided directly in the HTML template
     const cloudName = document.getElementById('cloudName').value;
     const uploadPreset = document.getElementById('uploadPreset').value;
-
+    const apiKey = document.getElementById('apiKey').value;
+  
     cloudinaryButton.addEventListener('click', function() {
         cloudinary.openUploadWidget({
             cloudName: cloudName,

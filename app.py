@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify, send_from_directory
 import cloudinary
 import cloudinary.uploader  # Ensure this import is correct
 from cloudinary import CloudinaryImage
@@ -42,6 +42,8 @@ cloudinary.config(
 )
 
 app = Flask(__name__)
+
+app.config['CUSTOM_STATIC_PATH'] = "node_modules/flowbite/dist/"
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -101,6 +103,10 @@ def upload_image():
         cloud_name=_env.cloud_name,
         upload_preset=_env.upload_preset,
     )
+
+@app.route('/cdn/<path:filename>')
+def custom_static(filename):
+    return send_from_directory(app.config['CUSTOM_STATIC_PATH'], filename)
 
 if __name__ == "__main__":
     if not _env.port:
