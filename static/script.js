@@ -10,22 +10,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const cloudName = document.getElementById('cloudName').value;
     const uploadPreset = document.getElementById('uploadPreset').value;
     const apiKey = document.getElementById('apiKey').value;
-
+    
     cloudinaryButton.addEventListener('click', function() {
         cloudinary.openUploadWidget({
             cloudName: cloudName,
             uploadPreset: uploadPreset,
-            apiKey: apiKey,
-            uploadSignature: (callback, params_to_sign) => {
-                fetch('/signature?' + new URLSearchParams(params_to_sign))
-                    .then(response => response.json())
-                    .then(data => {
-                        callback(data.signature);
-                    })
-                    .catch(error => {
-                        console.error('Signature fetch error:', error);
-                    });
-            },
             sources: ['local', 'camera', 'google_drive', 'dropbox', 'image_search'],
             multiple: false,
             cropping: true,
