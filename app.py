@@ -82,30 +82,28 @@ def home():
         public_id = "kk0hbslf4ohvt2duru3w" #request.form.get("public_id")
         theme = request.form.get("theme")
         costume = request.form.get("costume")
+        gender = request.form.get("gender")
 
         if public_id:
             try:
                 url_lists = []
                 for body_costume in body_costumes:
-                    url_lists.append(url_assambler(body_costume, costume, theme, public_id))
+                    url_lists.append(url_assambler(body_costume, gender + " " + costume, theme, public_id))
 
+            except Exception as e:
+                print("Error during transformation:", e)
+                return render_template(
+                    "result.html",
+                    original_url=f"https://res.cloudinary.com/%7B_env.cloud_name%7D/image/upload/%7Bpublic_id%7D",
+                    error_message="An error occurred during image transformation.",
+                )
 
-                if img_response.status_code == 200:
-                    img_base64 = base64.b64encode(img_response.content).decode('utf-8')                    
-                else:
-                    print("Error during transformation: Please, try another picture")
-                    return render_template(
-                        "result.html",
-                        original_url=f"https://res.cloudinary.com/{_env.cloud_name}/image/upload/{public_id}",
-                        error_message="An error occurred during image transformation.",
-                    )  
             # Render the result template
             return render_template(
                 "result.html",
-                original_url=f"https://res.cloudinary.com/{_env.cloud_name}/image/upload/{public_id}",
+                original_url=f"https://res.cloudinary.com/%7B_env.cloud_name%7D/image/upload/%7Bpublic_id%7D",
                 final_image_url=url_lists,
             )
-
     return render_template("index.html")
 
 @app.route("/upload", methods=["GET"])
