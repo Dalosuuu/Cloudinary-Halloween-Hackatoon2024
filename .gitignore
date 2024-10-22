@@ -12,3 +12,5 @@
 !requirements.txt
 
 .venv
+node_modules
+tailwind.config.js

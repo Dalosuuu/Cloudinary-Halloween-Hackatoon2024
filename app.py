@@ -34,7 +34,7 @@ cloudinary.config(
     cloud_name=_env.cloud_name,
     api_key=_env.api_key,
     api_secret=_env.api_secret,
-    secure=True,
+    sign_url=True,
 )
 
 app = Flask(__name__)
@@ -42,7 +42,7 @@ app = Flask(__name__)
 @app.route("/", methods=["GET", "POST"])
 def home():
     if request.method == "POST":
-        public_id = request.form.get("public_id")
+        public_id = "kk0hbslf4ohvt2duru3w" #request.form.get("public_id")
         theme = request.form.get("theme")
         costume = request.form.get("costume")
 
