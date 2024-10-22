@@ -10,7 +10,7 @@
 
 
 !requirements.txt
-
+!RdmeImages/upload_preset_settings.png
 .venv
 node_modules
 tailwind.config.js
