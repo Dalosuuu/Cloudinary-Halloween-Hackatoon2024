@@ -1,17 +1,21 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
 import cloudinary
 import cloudinary.uploader  # Ensure this import is correct
 from cloudinary import CloudinaryImage
 from dotenv import load_dotenv
 import os
-import time
-import hashlib
-import hmac
-from cloudinary import utils as cloudinary_utils
 from waitress import serve
+import requests
+import base64
 
 # Load environment variables
 load_dotenv()
+
+cert_crt_path = os.path.join(os.getcwd(), 'cloudinary_cert.crt')
+
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36'
+}
 
 class _env:
     """Enviroment variables here..."""
@@ -34,7 +38,7 @@ cloudinary.config(
     cloud_name=_env.cloud_name,
     api_key=_env.api_key,
     api_secret=_env.api_secret,
-    sign_url=True,
+    sign_url=True
 )
 
 app = Flask(__name__)
@@ -47,12 +51,11 @@ def home():
         costume = request.form.get("costume")
 
         if public_id:
-            try:
                 # Apply transformations using CloudinaryImage
                 image = CloudinaryImage(public_id)
                 final_image_url = image.build_url(
                     transformation=[
-                        {"width": 300, "crop": "scale"},
+                        {"width": 300, "crop": "scale", "fetch_format": "auto"},
                         {"effect": f"upscale"},
                         {
                             "effect": f"gen_replace:from_clothes;to_{costume}'s clothes;preserve-geometry_true"
@@ -69,21 +72,26 @@ def home():
                 # Notes
                 # Debugging: Print the final image URL
                 print("Final Image URL:", final_image_url)
+                
+                img_response = requests.get(final_image_url, headers=headers, verify=cert_crt_path)
+                if img_response.status_code == 423:
+                    img_response = requests.get(final_image_url, headers=headers, verify=cert_crt_path)
 
-            except Exception as e:
-                print("Error during transformation:", e)
+                if img_response.status_code == 200:
+                    img_base64 = base64.b64encode(img_response.content).decode('utf-8')                    
+                else:
+                    print("Error during transformation: Please, try another picture")
+                    return render_template(
+                        "result.html",
+                        original_url=f"https://res.cloudinary.com/{_env.cloud_name}/image/upload/{public_id}",
+                        error_message="An error occurred during image transformation.",
+                    )  
+                # Render the result template
                 return render_template(
                     "result.html",
                     original_url=f"https://res.cloudinary.com/{_env.cloud_name}/image/upload/{public_id}",
-                    error_message="An error occurred during image transformation.",
+                    final_image_url=img_base64,
                 )
-
-            # Render the result template
-            return render_template(
-                "result.html",
-                original_url=f"https://res.cloudinary.com/{_env.cloud_name}/image/upload/{public_id}",
-                final_image_url=final_image_url,
-            )
     return render_template("index.html")
 
 @app.route("/upload", methods=["GET"])
@@ -92,23 +100,6 @@ def upload_image():
         "upload.html",
         cloud_name=_env.cloud_name,
         upload_preset=_env.upload_preset,
-        api_key=_env.api_key
-    )
-
-@app.route("/signature", methods=["GET"])
-def get_signature():
-    params = {k: v for k, v in request.args.items()}
-    params['timestamp'] = int(time.time())
-    params['upload_preset'] = _env.upload_preset
-    
-    signature = cloudinary_utils.api_sign_request(params, _env.api_secret)
-    
-    return jsonify(
-        signature=signature,
-        timestamp=params['timestamp'],
-        api_key=_env.api_key,
-        cloud_name=_env.cloud_name,
-        upload_preset=_env.upload_preset
     )
 
 if __name__ == "__main__":
