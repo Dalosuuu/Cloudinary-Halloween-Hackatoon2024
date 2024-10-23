@@ -123,9 +123,9 @@ document.addEventListener('DOMContentLoaded', function () {
                             imageElement.alt = 'Error'; // Alt text for accessibility
                             imageElement.classList.add('w-full', 'rounded-lg'); // Tailwind classes for full width and rounded corners
                             let aurl = load_img(url,imageElement,i,data.url_lists.length);
-                            if(!aurl){
-                                imageElement.src = aurl;
-                            }
+                            // if(!aurl){
+                            //     imageElement.src = aurl;
+                            // }
                             // Listener to increment loaded images count
                             imageElement.addEventListener('load', function () {
                             //     imagesLoaded++;
