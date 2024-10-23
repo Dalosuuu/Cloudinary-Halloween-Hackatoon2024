@@ -78,18 +78,28 @@
                     </div>
                 </div>
                 <div class="border-2 border-[#166534] rounded-lg p-4 text-center bg-gray-900" data-id="22">
+                    <div id="after">
                     <h3 class="text-lg font-semibold mb-2 text-[#22C55E]" data-id="23">After</h3>
-                    <div class="flex flex-col items-center justify-center h-48" data-id="25"><svg
-                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-ghost w-12 h-12 mb-2 text-[#22C55E]" data-id="26">
-                            <path d="M9 10h.01"></path>
-                            <path d="M15 10h.01"></path>
-                            <path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z">
-                            </path>
-                        </svg>
-                        <p class="text-gray-400 text-sm" data-id="27">Apply effects to see result</p>
+                        <div class="flex flex-col items-center justify-center h-48" data-id="25"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-ghost w-12 h-12 mb-2 text-[#22C55E]"
+                                data-id="26">
+                                <path d="M9 10h.01"></path>
+                                <path d="M15 10h.01"></path>
+                                <path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z">
+                                </path>
+                            </svg>
+                            <p class="text-gray-400 text-sm" data-id="27">Apply effects to see result</p>
+                        </div>
                     </div>
+                    <div class="flex-col items-center justify-center h-56 z-10 hidden" id="loanding">
+                        <svg class="animate-spin h-12 w-12 text-[#22C55E]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 0l3-3m-3 3L9 5M4 8h16m-7 4v8m0-8h3m-3 0l-3 3m3-3l-3-3" />
+                        </svg>
+                        <p class="text-gray-400 text-sm mt-6">Loading... please wait</p>
+                    </div>
+                    <div class="grid-cols-2 gap-4 hidden" id="photo_grid"></div>
                 </div>
             </div>
             <div data-id="28"><input
@@ -182,8 +192,8 @@
                 </div>
                 <div data-id="64">
                     <h3 class="text-xl font-semibold mb-2 pt-6 text-[#22C55E]" data-id="65">Choose a Gender:</h3>
-                    <div role="radiogroup" aria-required="false" dir="ltr" class="grid gap-2 pb-6" data-id="66" tabindex="0"
-                        style="outline: none;">
+                    <div role="radiogroup" aria-required="false" dir="ltr" class="grid gap-2 pb-6" data-id="66"
+                        tabindex="0" style="outline: none;">
                         <div class="flex items-center space-x-2" data-id="67"><button type="button" role="radio"
                                 aria-checked="true" data-state="checked" value="graveyard"
                                 class="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -200,31 +210,31 @@
                         <div class="flex items-center space-x-2" data-id="70"><button type="button" role="radio"
                                 aria-checked="false" data-state="unchecked" value="haunted-house"
                                 class="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                id="haunted-house" data-id="71" tabindex="-1" data-radix-collection-item=""></button><label
+                                id="haunted-house" data-id="71" tabindex="-1"
+                                data-radix-collection-item=""></button><label
                                 class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                 for="haunted-house" data-id="72">Female</label></div>
                     </div>
-            </div>
-            <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 h-10 px-4 py-2 w-full bg-[#22C55E] text-gray-900 hover:bg-[#16A34A] shadow-lg shadow-[#22C55E]/50"
-            data-id="73"
-            disabled>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                   stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-skull mr-2 h-4 w-4" data-id="65">
-                <circle cx="9" cy="12" r="1"></circle>
-                <circle cx="15" cy="12" r="1"></circle>
-                <path d="M8 20v2h8v-2"></path>
-                <path d="m12.5 17-.5-1-.5 1h1z"></path>
-                <path d="M16 20a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20"></path>
-              </svg>
-              Apply Spooky Effect
-          </button>
-          
+                </div>
+                <button
+                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 h-10 px-4 py-2 w-full bg-[#22C55E] text-gray-900 hover:bg-[#16A34A] shadow-lg shadow-[#22C55E]/50"
+                    data-id="73" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-skull mr-2 h-4 w-4" data-id="65">
+                        <circle cx="9" cy="12" r="1"></circle>
+                        <circle cx="15" cy="12" r="1"></circle>
+                        <path d="M8 20v2h8v-2"></path>
+                        <path d="m12.5 17-.5-1-.5 1h1z"></path>
+                        <path d="M16 20a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20"></path>
+                    </svg>
+                    Apply Spooky Effect
+                </button>
+
         </section>
     </div>
     <h1>Transform Your Image for Halloween!</h1>
-    <form id="uploadForm" action="/" method="post">
+    <form id="uploadForm" action="/upload" method="post">
         <div class="file-input-wrapper">
             <button type="button" id="cloudinaryUploadButton">Upload Image</button>
             <div id="fileNameDisplay">Click to upload an image *** debug mode, no needed ***</div>
@@ -245,7 +255,7 @@
             <option value="" disabled selected>Select Costume</option>
             <option value="custom">Custom</option>
             <option value="pirate">Pirate</option>
-            <option value="vampire_costume">Vampire</option>
+            <option value="vampire">Vampire</option>
             <option value="zombie">Zombie</option>
             <option value="witch">Witch</option>
         </select><br>
@@ -256,16 +266,13 @@
     </div>
     <div id="fileNameDisplay"></div>
     <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
-    <script>
-        const cloudName = '{{ cloud_name }}';
-        const uploadPreset = '{{ upload_preset }}';
-        const apiKey = '{{ api_key }}';
-    </script>
     <footer class="bg-[#030712] w-full z-20 flex items-center justify-between p-4 mt-auto">
         <p class="font-sans text-[#D8E7EB] font-bold">&copy; 2024 Halloween Image Transformation. All rights reserved.
         </p>
     </footer>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <input type="number" style="display: none;" value=4 name="counter">
 </body>
 
 </html>

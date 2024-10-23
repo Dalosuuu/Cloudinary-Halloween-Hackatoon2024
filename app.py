@@ -46,11 +46,11 @@ app = Flask(__name__)
 app.config['CUSTOM_STATIC_PATH'] = "node_modules/flowbite/dist/"
 
 costumes = {
-    "Custom": "Random halloween disguse",
-    "Pirate": "Pirate outfit",
-    "Vampire": "Vampire clothes",
-    "Zombie": "Tattered Zombie Streetwear",
-    "Witch": "Witch robes"
+    "custom": "Random halloween disguse",
+    "pirate": "Pirate outfit",
+    "vampire": "Vampire clothes",
+    "zombie": "Tattered Zombie Streetwear",
+    "witch": "Witch robes"
 }
 
 body_costumes = ["clothes", "shoulders", "shirt", "body"]
@@ -78,34 +78,41 @@ def url_assambler(body_costume, costume, theme, public_id):
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    if request.method == "POST":
-        public_id = "kk0hbslf4ohvt2duru3w" #request.form.get("public_id")
-        theme = request.form.get("theme")
-        costume = request.form.get("costume")
-        gender = request.form.get("gender")
-
-        if public_id:
-            try:
-                url_lists = []
-                for body_costume in body_costumes:
-                    url_lists.append(url_assambler(body_costume, gender + " " + costume, theme, public_id))
-
-            except Exception as e:
-                print("Error during transformation:", e)
-                return render_template(
-                    "result.html",
-                    original_url=f"https://res.cloudinary.com/%7B_env.cloud_name%7D/image/upload/%7Bpublic_id%7D",
-                    error_message="An error occurred during image transformation.",
-                )
-
-            # Render the result template
-            return render_template(
-                "result.html",
-                original_url=f"https://res.cloudinary.com/%7B_env.cloud_name%7D/image/upload/%7Bpublic_id%7D",
-                final_image_url=url_lists,
-            )
     return render_template("index.html")
 
+@app.route("/upload", methods=["POST"])
+def ai_transform():
+
+    public_id = request.form.get("public_id") #"kk0hbslf4ohvt2duru3w"
+    theme = request.form.get("theme")
+    costume = request.form.get("costume")
+    gender = request.form.get("gender")
+    gender = "Male"
+
+    if public_id:
+        try:
+#             url_lists = ["http://res.cloudinary.com/dhfrp2bp5/image/upload/s--HWt2rq2x--/c_scale,w_300/e_upscale/e_gen_replace:from_clothes;to_Male_with_Vampire_clothes;preserve-geometry_true/e_gen_background_replace:prompt_Add_cemetery_to_the_background/e_enhance/kk0hbslf4ohvt2duru3w",
+# "http://res.cloudinary.com/dhfrp2bp5/image/upload/s--90004NAQ--/c_scale,w_300/e_upscale/e_gen_replace:from_shoulders;to_Male_with_Vampire_clothes;preserve-geometry_true/e_gen_background_replace:prompt_Add_cemetery_to_the_background/e_enhance/kk0hbslf4ohvt2duru3w",
+# "http://res.cloudinary.com/dhfrp2bp5/image/upload/s--VBN7Jpxp--/c_scale,w_300/e_upscale/e_gen_replace:from_shirt;to_Male_with_Vampire_clothes;preserve-geometry_true/e_gen_background_replace:prompt_Add_cemetery_to_the_background/e_enhance/kk0hbslf4ohvt2duru3w",
+# "http://res.cloudinary.com/dhfrp2bp5/image/upload/s--Ypnx_6_0--/c_scale,w_300/e_upscale/e_gen_replace:from_body;to_Male_with_Vampire_clothes;preserve-geometry_true/e_gen_background_replace:prompt_Add_cemetery_to_the_background/e_enhance/kk0hbslf4ohvt2duru3w"
+# ]
+            url_lists = []
+            for body_costume in body_costumes:
+                url_lists.append(url_assambler(body_costume, gender + " with " + costumes[costume], theme, public_id))
+            
+        except Exception as e:
+            print("Error during transformation:", e)
+            return jsonify(
+                original_url=f"https://res.cloudinary.com/{_env.cloud_name}/image/upload/{public_id}",
+                error_message="An error occurred during image transformation.",
+            )
+
+        # Render the result template
+        return jsonify(
+            original_url=f"https://res.cloudinary.com/{_env.cloud_name}/image/upload/{public_id}",
+            url_lists=url_lists,
+        )
+    
 @app.route("/upload", methods=["GET"])
 def upload_image():
     return render_template(
