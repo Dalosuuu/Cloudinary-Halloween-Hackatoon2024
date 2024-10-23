@@ -8,6 +8,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favico.svg') }}">
+    <style>
+        [role=radio] {
+            color: #DAE7EB;
+            background-color: unset;
+        }
+    
+        [role=radio]:checked {
+            background-image: url("{{ url_for('static', filename='images/circle.svg')}}");
+            background-size: 1em 1em;
+            border-color: #DAE7EB;
+        }
+    
+        [role=radio]:focus,
+        [role=radio]:focus-within {
+            border-width: 0;
+        }
+    </style>
 </head>
 
 <body class="font-sans text-[#D8E7EB] bg-[#111827] min-h-screen flex flex-col">
@@ -60,6 +77,11 @@
         <p class="text-xl text-[#D8E7EB]" data-id="12">Upload your photo, choose a spooky costume and eerie background,
             and watch the magic happen!</p>
     </section>
+    <form id="uploadForm" action="/upload" method="post">
+    <input type="hidden" id="publicIdInput" name="public_id">
+    <input type="hidden" id="cloudName" value="{{ cloud_name }}">
+    <input type="hidden" id="uploadPreset" value="{{ upload_preset }}">
+    <input type="hidden" id="apiKey" value="{{ api_key }}">
     <div class="grid md:grid-cols-2 gap-8" data-id="13">
         <section class="space-y-4" data-id="14">
             <div class="grid grid-cols-2 gap-4" data-id="15">
@@ -106,7 +128,7 @@
                     class="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 hidden"
                     id="image-upload" accept="image/*" data-id="29" type="file"><label
                     class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                    for="image-upload" data-id="30"><button
+                    for="image-upload" data-id="30"><button type="button" id="cloudinaryUploadButton"
                         class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-10 px-4 py-2 w-full bg-[#22C55E] text-gray-900 hover:bg-[#16A34A] shadow-lg shadow-[#22C55E]/50"
                         data-id="31"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -121,35 +143,41 @@
                 <h3 class="text-xl font-semibold mb-2 text-[#22C55E]" data-id="35">Choose a Costume:</h3>
                 <div role="radiogroup" aria-required="false" dir="ltr" class="grid gap-2" data-id="36" tabindex="0"
                     style="outline: none;">
-                    <div class="flex items-center space-x-2" data-id="37"><button type="button" role="radio"
-                            aria-checked="false" data-state="unchecked" value="ghost"
+                    <div class="flex items-center space-x-2" data-id="37"><input type="radio" name="costume-radio"
+                        role="radio" aria-checked="false" data-state="unchecked" value="random"
+                        class="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        id="random" data-id="38" tabindex="-1" data-radix-collection-item=""></input><label
+                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        for="random" data-id="39">Random</label></div>
+                    <div class="flex items-center space-x-2" data-id="37"><input type="radio" name="costume-radio"
+                        role="radio" aria-checked="false" data-state="unchecked" value="pirate"
+                        class="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        id="pirate" data-id="38" tabindex="-1" data-radix-collection-item=""></input><label
+                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        for="pirate" data-id="39">Pirate</label></div>
+                    <div class="flex items-center space-x-2" data-id="37"><input type="radio" name="costume-radio"
+                            role="radio" aria-checked="false" data-state="unchecked" value="ghost"
                             class="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            id="ghost" data-id="38" tabindex="-1" data-radix-collection-item=""></button><label
+                            id="ghost" data-id="38" tabindex="-1" data-radix-collection-item=""></input><label
                             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             for="ghost" data-id="39">Ghost</label></div>
-                    <div class="flex items-center space-x-2" data-id="40"><button type="button" role="radio"
-                            aria-checked="false" data-state="unchecked" value="vampire"
+                    <div class="flex items-center space-x-2" data-id="40"><input type="radio" name="costume-radio"
+                            role="radio" aria-checked="false" data-state="unchecked" value="vampire"
                             class="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            id="vampire" data-id="41" tabindex="-1" data-radix-collection-item=""></button><label
+                            id="vampire" data-id="41" tabindex="-1" data-radix-collection-item=""></input><label
                             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             for="vampire" data-id="42">Vampire</label></div>
-                    <div class="flex items-center space-x-2" data-id="43"><button type="button" role="radio"
-                            aria-checked="true" data-state="checked" value="witch"
+                    <div class="flex items-center space-x-2" data-id="43"><input type="radio" name="costume-radio"
+                            role="radio" aria-checked="true" data-state="checked" value="witch"
                             class="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             id="witch" data-id="44" tabindex="0" data-radix-collection-item=""><span
-                                data-state="checked" class="flex items-center justify-center"><svg
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    class="lucide lucide-circle h-2.5 w-2.5 fill-current text-current">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                </svg></span></button><label
-                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            for="witch" data-id="45">Witch</label></div>
-                    <div class="flex items-center space-x-2" data-id="46"><button type="button" role="radio"
-                            aria-checked="false" data-state="unchecked" value="zombie"
+                            data-state="checked" class="flex items-center justify-center"></input><label
+                                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                for="witch" data-id="45">Witch</label></div>
+                    <div class="flex items-center space-x-2" data-id="46"><input type="radio" name="costume-radio"
+                            role="radio" aria-checked="false" data-state="unchecked" value="zombie"
                             class="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            id="zombie" data-id="47" tabindex="-1" data-radix-collection-item=""></button><label
+                            id="zombie" data-id="47" tabindex="-1" data-radix-collection-item=""></input><label
                             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             for="zombie" data-id="48">Zombie</label></div>
                 </div>
@@ -158,35 +186,29 @@
                 <h3 class="text-xl font-semibold mb-2 text-[#22C55E]" data-id="50">Choose a Background:</h3>
                 <div role="radiogroup" aria-required="false" dir="ltr" class="grid gap-2" data-id="51" tabindex="0"
                     style="outline: none;">
-                    <div class="flex items-center space-x-2" data-id="52"><button type="button" role="radio"
-                            aria-checked="true" data-state="checked" value="graveyard"
+                    <div class="flex items-center space-x-2" data-id="52"><input type="radio" name="theme-radio"
+                            role="radio" aria-checked="true" data-state="checked" value="graveyard"
                             class="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             id="graveyard" data-id="53" tabindex="-1" data-radix-collection-item=""><span
-                                data-state="checked" class="flex items-center justify-center"><svg
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    class="lucide lucide-circle h-2.5 w-2.5 fill-current text-current">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                </svg></span></button><label
-                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            for="graveyard" data-id="54">Spooky Graveyard</label></div>
-                    <div class="flex items-center space-x-2" data-id="55"><button type="button" role="radio"
-                            aria-checked="false" data-state="unchecked" value="haunted-house"
+                            data-state="checked" class="flex items-center justify-center"></input><label
+                                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                for="graveyard" data-id="54">Spooky Graveyard</label></div>
+                    <div class="flex items-center space-x-2" data-id="55"><input type="radio" name="theme-radio"
+                            role="radio" aria-checked="false" data-state="unchecked" value="haunted-house"
                             class="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            id="haunted-house" data-id="56" tabindex="-1" data-radix-collection-item=""></button><label
+                            id="haunted-house" data-id="56" tabindex="-1" data-radix-collection-item=""></input><label
                             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             for="haunted-house" data-id="57">Haunted House</label></div>
-                    <div class="flex items-center space-x-2" data-id="58"><button type="button" role="radio"
-                            aria-checked="false" data-state="unchecked" value="pumpkin-patch"
+                    <div class="flex items-center space-x-2" data-id="58"><input type="radio" name="theme-radio"
+                            role="radio" aria-checked="false" data-state="unchecked" value="pumpkin-patch"
                             class="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            id="pumpkin-patch" data-id="59" tabindex="-1" data-radix-collection-item=""></button><label
+                            id="pumpkin-patch" data-id="59" tabindex="-1" data-radix-collection-item=""></input><label
                             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             for="pumpkin-patch" data-id="60">Pumpkin Patch</label></div>
-                    <div class="flex items-center space-x-2" data-id="61"><button type="button" role="radio"
-                            aria-checked="false" data-state="unchecked" value="dark-forest"
+                    <div class="flex items-center space-x-2" data-id="61"><input type="radio" name="theme-radio"
+                            role="radio" aria-checked="false" data-state="unchecked" value="dark-forest"
                             class="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            id="dark-forest" data-id="62" tabindex="-1" data-radix-collection-item=""></button><label
+                            id="dark-forest" data-id="62" tabindex="-1" data-radix-collection-item=""></input><label
                             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             for="dark-forest" data-id="63">Dark Forest</label></div>
                 </div>
@@ -194,31 +216,25 @@
                     <h3 class="text-xl font-semibold mb-2 pt-6 text-[#22C55E]" data-id="65">Choose a Gender:</h3>
                     <div role="radiogroup" aria-required="false" dir="ltr" class="grid gap-2 pb-6" data-id="66"
                         tabindex="0" style="outline: none;">
-                        <div class="flex items-center space-x-2" data-id="67"><button type="button" role="radio"
-                                aria-checked="true" data-state="checked" value="graveyard"
+                        <div class="flex items-center space-x-2" data-id="67">
+                            <input type="radio" name="gender-radio" role="radio" aria-checked="true"
+                                data-state="checked" value="male"
                                 class="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                id="graveyard" data-id="68" tabindex="-1" data-radix-collection-item=""><span
-                                    data-state="checked" class="flex items-center justify-center"><svg
-                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="lucide lucide-circle h-2.5 w-2.5 fill-current text-current">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                    </svg></span></button><label
+                                id="male" data-id="68" tabindex="-1" data-radix-collection-item=""></input><label
                                 class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                for="graveyard" data-id="69">Male</label></div>
-                        <div class="flex items-center space-x-2" data-id="70"><button type="button" role="radio"
-                                aria-checked="false" data-state="unchecked" value="haunted-house"
+                                for="male" data-id="69">Male</label>
+                        </div>
+                        <div class="flex items-center space-x-2" data-id="70"><input type="radio" name="gender-radio"
+                                role="radio" aria-checked="false" data-state="unchecked" value="female"
                                 class="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                id="haunted-house" data-id="71" tabindex="-1"
-                                data-radix-collection-item=""></button><label
+                                id="female" data-id="71" tabindex="-1" data-radix-collection-item=""></input><label
                                 class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                for="haunted-house" data-id="72">Female</label></div>
+                                for="female" data-id="72">Female</label></div>
                     </div>
                 </div>
                 <button
-                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 h-10 px-4 py-2 w-full bg-[#22C55E] text-gray-900 hover:bg-[#16A34A] shadow-lg shadow-[#22C55E]/50"
-                    data-id="73" disabled>
+                    type="submit" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 h-10 px-4 py-2 w-full bg-[#22C55E] text-gray-900 hover:bg-[#16A34A] shadow-lg shadow-[#22C55E]/50"
+                    data-id="73">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="lucide lucide-skull mr-2 h-4 w-4" data-id="65">
@@ -233,43 +249,14 @@
 
         </section>
     </div>
-    <h1>Transform Your Image for Halloween!</h1>
-    <form id="uploadForm" action="/upload" method="post">
-        <div class="file-input-wrapper">
-            <button type="button" id="cloudinaryUploadButton">Upload Image</button>
-            <div id="fileNameDisplay">Click to upload an image *** debug mode, no needed ***</div>
-        </div>
-        <input type="hidden" id="publicIdInput" name="public_id">
-        <input type="hidden" id="cloudName" value="{{ cloud_name }}">
-        <input type="hidden" id="uploadPreset" value="{{ upload_preset }}">
-        <input type="hidden" id="apiKey" value="{{ api_key }}">
-        <select name="theme" required>
-            <option value="" disabled selected>Select Theme</option>
-            <option value="halloween">Halloween</option>
-            <option value="cemetery">Cemetery</option>
-            <option value="haunted_house">Haunted House</option>
-            <option value="pumpkin_patch">Pumpkin Patch</option>
-            <option value="night_club">Night Club</option>
-        </select><br>
-        <select name="costume" required>
-            <option value="" disabled selected>Select Costume</option>
-            <option value="custom">Custom</option>
-            <option value="pirate">Pirate</option>
-            <option value="vampire">Vampire</option>
-            <option value="zombie">Zombie</option>
-            <option value="witch">Witch</option>
-        </select><br>
-        <button type="submit">Upload and Transform</button>
     </form>
     <div id="loading" style="display:none;">
         <p id="loadingMessage"></p>
     </div>
-    <div id="fileNameDisplay"></div>
     <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
-    <footer class="bg-[#030712] w-full z-20 flex items-center justify-between p-4 mt-auto">
-        <p class="font-sans text-[#D8E7EB] font-bold">&copy; 2024 Halloween Image Transformation. All rights reserved.
-        </p>
-    </footer>
+    <footer class="bg-[#030712] p-4 mt-auto text-center">
+        <p class="font-sans text-[#D8E7EB] font-bold">&copy; 2024 Halloween Image Transformation. All rights reserved.</p>
+      </footer>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 
     <input type="number" style="display: none;" value=4 name="counter">

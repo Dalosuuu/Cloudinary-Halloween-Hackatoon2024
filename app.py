@@ -46,10 +46,11 @@ app = Flask(__name__)
 app.config['CUSTOM_STATIC_PATH'] = "node_modules/flowbite/dist/"
 
 costumes = {
-    "custom": "Random halloween disguse",
+    "random": "Random halloween disguse",
     "pirate": "Pirate outfit",
     "vampire": "Vampire clothes",
     "zombie": "Tattered Zombie Streetwear",
+    "ghost": "ghost style",
     "witch": "Witch robes"
 }
 
@@ -84,10 +85,11 @@ def home():
 def ai_transform():
 
     public_id = request.form.get("public_id") #"kk0hbslf4ohvt2duru3w"
-    theme = request.form.get("theme")
-    costume = request.form.get("costume")
-    gender = request.form.get("gender")
-    gender = "Male"
+    theme = request.form.get("theme-radio")
+    costume = request.form.get("costume-radio")
+    gender = request.form.get("gender-radio")
+    if not gender:
+        gender = "Male"
 
     if public_id:
         try:

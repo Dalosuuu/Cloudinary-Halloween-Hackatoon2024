@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('uploadForm');
     const button = form.querySelector('button[type="submit"]');
     const cloudinaryButton = document.getElementById('cloudinaryUploadButton');
-    const fileNameDisplay = document.getElementById('fileNameDisplay');
     const publicIdInput = document.getElementById('publicIdInput');
 
     // These values are now provided directly in the HTML template
@@ -29,13 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (result && result.event === "success") {
                 const fileUrl = result.info.secure_url;
                 const publicId = result.info.public_id;
-
-                if (fileNameDisplay) {
-                    fileNameDisplay.textContent = `Selected: ${result.info.original_filename}`;
-                    fileNameDisplay.style.color = '#f0e68c'; // Ensure text is visible
-                } else {
-                    console.warn('fileNameDisplay element not found');
-                }
 
                 if (publicIdInput) {
                     publicIdInput.value = publicId;
@@ -73,14 +65,6 @@ document.addEventListener('DOMContentLoaded', function () {
         //     alert('Please upload an image.');
         //     valid = false;
         // }
-
-        const selects = form.querySelectorAll('select');
-        selects.forEach(select => {
-            if (!select.value) {
-                alert('Please select an option for ' + select.name.replace('_', ' ') + '.');
-                valid = false;
-            }
-        });
 
         if (valid) {
             button.disabled = true;
@@ -127,6 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             if (imagesLoaded === data.url_lists.length) {
                                 console.log('All images have loaded!');
                                 // Perform any additional actions here
+                                button.disabled = false;
                                 imagesLoaded = 0;
                                 document.getElementById('photo_grid').classList.remove('hidden');
                                 document.getElementById('photo_grid').classList.add('grid');
@@ -141,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
                  
                 }
                     // Hide loading spinner and re-enable the button
-                    button.disabled = false;
+                    // button.disabled = false;
                     loading.style.display = 'none';
                 })
                 .catch(error => {
