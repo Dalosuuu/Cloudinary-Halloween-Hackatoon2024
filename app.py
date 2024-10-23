@@ -44,7 +44,7 @@ costumes = {
     "Pirate": "Pirate outfit",
     "Vampire": "Vampire clothes",
     "Zombie": "Tattered Zombie Streetwear",
-    "Witch": "Magic robes"
+    "Witch": "Witch robes"
 }
 
 body_costumes = ["clothes", "shoulders", "shirt", "body"]
@@ -76,12 +76,13 @@ def home():
         public_id = "kk0hbslf4ohvt2duru3w" #request.form.get("public_id")
         theme = request.form.get("theme")
         costume = request.form.get("costume")
+        gender = request.form.get("gender")
 
         if public_id:
             try:
                 url_lists = []
                 for body_costume in body_costumes:
-                    url_lists.append(url_assambler(body_costume, costume, theme, public_id))
+                    url_lists.append(url_assambler(body_costume, gender + " " + costume, theme, public_id))
 
             except Exception as e:
                 print("Error during transformation:", e)

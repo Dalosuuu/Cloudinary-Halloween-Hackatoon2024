@@ -230,9 +230,9 @@
             <div id="fileNameDisplay">Click to upload an image *** debug mode, no needed ***</div>
         </div>
         <input type="hidden" id="publicIdInput" name="public_id">
-        <input type="hidden" id="cloudName" name="{{ cloud_name }}">
-        <input type="hidden" id="uploadPreset" name="{{ upload_preset }}">
-        <input type="hidden" id="apiKey" name="{{ api_key }}">
+        <input type="hidden" id="cloudName" value="{{ cloud_name }}">
+        <input type="hidden" id="uploadPreset" value="{{ upload_preset }}">
+        <input type="hidden" id="apiKey" value="{{ api_key }}">
         <select name="theme" required>
             <option value="" disabled selected>Select Theme</option>
             <option value="halloween">Halloween</option>
