@@ -50,7 +50,7 @@ costumes = {
     "Pirate": "Pirate outfit",
     "Vampire": "Vampire clothes",
     "Zombie": "Tattered Zombie Streetwear",
-    "Witch": "Magic robes"
+    "Witch": "Witch robes"
 }
 
 body_costumes = ["clothes", "shoulders", "shirt", "body"]
