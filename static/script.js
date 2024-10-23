@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const uploadPreset = document.getElementById('uploadPreset').value;
     const apiKey = document.getElementById('apiKey').value;
 
-  cloudinaryButton.addEventListener('click', function () {
+    cloudinaryButton.addEventListener('click', function () {
         cloudinary.openUploadWidget({
             cloudName: cloudName,
             uploadPreset: uploadPreset,
@@ -51,12 +51,35 @@ document.addEventListener('DOMContentLoaded', function () {
                 originalImage.src = fileUrl; // Set the new image URL
                 originalImage.alt = 'Transformed Image'; // Alt text for accessibility
                 originalImage.classList.add('w-full', 'rounded-lg'); // Tailwind classes for full width and rounded corners
-
+                document.getElementById('after').classList.remove('hidden');
+                const resultContainer = document.querySelector('[id="photo_grid"]'); // Target the div
+                resultContainer.innerHTML = "";
                 resultBlock2.appendChild(originalImage)
             }
         });
     });
-
+    function load_img(url,imageElement,i,maxIntentos) {
+        if (i < maxIntentos) {
+            console.log(`Intentando cargar la imagen... Intento ${i}`);
+            fetch(url, { method: 'GET' }).then(response => {
+                if (response.ok) {
+                } else if (response.status === 423) {
+                    load_img(url);
+                } else if (response.status === 400) {
+                    return "{{ url_for('static', filename='images/image.png') }}";
+                    console.log('Error 400: Solicitud incorrecta (Bad Request).');
+                } else {
+                    return "{{ url_for('static', filename='images/image.png') }}";
+                    console.log(`Error ${response.status}: ${response.statusText}`);
+                }
+            }
+            ).catch(error => {
+                return "{{ url_for('static', filename='images/image.png') }}";
+                console.log('Ocurrió un error al intentar cargar la imagen:', error);
+            });
+        }
+        return ;
+    }
     form.addEventListener('submit', function (event) {
         event.preventDefault();
         let valid = true;
@@ -69,11 +92,12 @@ document.addEventListener('DOMContentLoaded', function () {
         if (valid) {
             button.disabled = true;
             console.log("Valid Form")
+            const resultContainer = document.querySelector('[id="photo_grid"]'); // Target the div
+            resultContainer.innerHTML = "";
             document.getElementById('after').classList.add('hidden');
-            document.getElementById('loanding').classList.remove('hidden');
-            document.getElementById('loanding').classList.add('flex');
+            // document.getElementById('loanding').classList.remove('hidden');
+            // document.getElementById('loanding').classList.add('flex');
             document.getElementById('photo_grid').classList.add('hidden');
-
 
             const formData = new FormData(form);
             fetch(form.action, {
@@ -87,44 +111,40 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (data.error) {
                         throw new Error(data.error);
                     }
-  
-                // If the data includes a list of image URLs
-                if (data.url_lists && Array.isArray(data.url_lists)) {
 
-                    const resultContainer = document.querySelector('[id="photo_grid"]'); // Target the div
+                    // If the data includes a list of image URLs
+                    if (data.url_lists && Array.isArray(data.url_lists)) {
 
-                    let imagesLoaded = 0; // Counter for loaded images
-
-                    data.url_lists.forEach(url => {
-                        const imageElement = document.createElement('img');
-                        imageElement.src = url; // Set the new image URL
-                        imageElement.alt = 'Transformed Image'; // Alt text for accessibility
-                        imageElement.classList.add('w-full', 'rounded-lg'); // Tailwind classes for full width and rounded corners
-                    
-                        // Listener to increment loaded images count
-                        imageElement.addEventListener('load', function() {
-                            imagesLoaded++;
-                            const counterElement = document.getElementsByName('counter')[0]; // Get the first element
-                            counterElement.value = parseInt(counterElement.value) - 1; // Decrement the counter
-                            
-                            // Optionally check if all images are loaded
-                            if (imagesLoaded === data.url_lists.length) {
-                                console.log('All images have loaded!');
-                                // Perform any additional actions here
-                                button.disabled = false;
-                                imagesLoaded = 0;
-                                document.getElementById('photo_grid').classList.remove('hidden');
-                                document.getElementById('photo_grid').classList.add('grid');
-                                document.getElementById('loanding').classList.remove('flex');
-                                document.getElementById('loanding').classList.add('hidden');
+                        document.getElementById('loanding').classList.remove('hidden');
+            document.getElementById('loanding').classList.add('flex');
+                        data.url_lists.forEach((url,i) => {
+                            const imageElement = document.createElement('img');
+                            imageElement.src = url; // Set the new image URL
+                            imageElement.alt = 'Error'; // Alt text for accessibility
+                            imageElement.classList.add('w-full', 'rounded-lg'); // Tailwind classes for full width and rounded corners
+                            let aurl = load_img(url,imageElement,i,data.url_lists.length);
+                            if(!aurl){
+                                imageElement.src = aurl;
                             }
+                            // Listener to increment loaded images count
+                            imageElement.addEventListener('load', function () {
+                            //     imagesLoaded++;
+
+                            //     // Optionally check if all images are loaded
+                                    console.log('All images have loaded!');
+                                    // Perform any additional actions here
+                                    button.disabled = false;
+                                    imagesLoaded = 0;
+                                    document.getElementById('photo_grid').classList.remove('hidden');
+                                    document.getElementById('photo_grid').classList.add('grid');
+                                    document.getElementById('loanding').classList.remove('flex');
+                                    document.getElementById('loanding').classList.add('hidden');
+                            });
+                            // Append the new image to the photo container
+                            resultContainer.appendChild(imageElement);
                         });
-                    
-                        // Append the new image to the photo container
-                        resultContainer.appendChild(imageElement);
-                    });
-                 
-                }
+
+                    }
                     // Hide loading spinner and re-enable the button
                     // button.disabled = false;
                     loading.style.display = 'none';
@@ -139,4 +159,5 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
         }
     }
-)});
+    )
+});
